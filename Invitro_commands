@@ -1,0 +1,86 @@
+
+#-#-#-#-#-#-#-#-#
+#	TRIMMING	#
+#-#-#-#-#-#-#-#-#
+
+java -jar /zfs/datastore0/software/src/Trimmomatic-0.36/trimmomatic-0.36.jar PE -threads 8 -phred33 00_raw/filename_R1.fastq 00_raw/filename_R2.fastq 02_trimmed/filename_forward_trimmed.fastq 02_trimmed/filename_forward_Unpaired_trimmed.fastq 02_trimmed/filename_reverse_trimmed.fastq 02_trimmed/filename_reverse_Unpaired_trimmed.fastq ILLUMINACLIP:/zfs/datastore0/software/src/Trimmomatic-0.36/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:40
+
+
+
+#-#-#-#-#-#-#-#-#
+#	MAPPING		#
+#-#-#-#-#-#-#-#-#
+#			--end-to-end: 		default. will use whole read to allign.
+#			--very-sensitive:	same as running with options: -D 20 -R 3 -N 0 -L 20 -i S,1,0.50
+#			-p:					cores
+#			-mm:				momory-mapped (share same mamory image of index)
+#			-q:					reads are FASTQ files
+#			-x:					basename of the index for the reference genome
+#			-1:					Comma-separated list of files containing mate 1s
+#			-2:					Comma-separated list of files containing mate 2s
+#			-U:					Comma-separated list of files containing unpaired reads to be aligned
+#			-S:					File to write SAM alignments to
+#								http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml
+bowtie2 --end-to-end --very-sensitive -p 16 -q --mm -x ../../bowtie/hg19 -1 02_trimmed/filename_forward_trimmed.fastq -2 02_trimmed/filename_reverse_trimmed.fastq -U 02_trimmed/filename__forward_Unpaired_trimmed.fastq,02_trimmed/Hfilename_reverse_Unpaired_trimmed.fastq -S 03_bowtie/filename.sam
+
+
+#-#-#-#-#-#-#-#-#
+#	MAKING BAM	#	samtools view [options] in.sam|in.bam|in.cram [region...]
+#-#-#-#-#-#-#-#-#
+#			-b:					output in BAM format
+#			-@:					number of BAM compression threads to use in addition to the main thread.
+#			-o:					output file
+#								http://www.htslib.org/doc/samtools.html
+samtools view -b -@ 16 -o 04_bam/filename.bam 03_bowtie/filename.sam
+
+
+#-#-#-#-#-#-#-#-#
+#	 SORTING	#  samtools sort [-l level] [-m maxMem] [-o out.bam] [-O format] [-n] [-t tag] [-T tmpprefix] [-@ threads] [in.sam|in.bam|in.cram] 
+#-#-#-#-#-#-#-#-#
+#								produces smaller file. Remove unsorted file.
+#			-@:					number of BAM compression threads to use in addition to the main thread.
+#			-o:					output file
+#								http://www.htslib.org/doc/samtools.html
+samtools sort -@ 16 -o 04_bam/filename_sorted.bam 04_bam/filename.bam
+
+
+#-#-#-#-#-#-#-#-#
+#   REMOVE DUP	#	samtools rmdup [-sS] <input.srt.bam> <out.bam>
+#-#-#-#-#-#-#-#-#
+#								http://www.htslib.org/doc/samtools.html
+samtools rmdup 04_bam/filename_sorted.bam 04_bam/filename_sorted_rmdup.bam
+
+
+#-#-#-#-#-#-#-#-#
+#   BEDGRAPH	#	bedtools genomecov [OPTIONS] [-i|-ibam] -g (iff. -i)
+#-#-#-#-#-#-#-#-#
+#			-bga:				Report depth in BedGraph format, same as -bg, but with this option, regions with zero coverage are also reported. This allows one to quickly extract all regions of a genome with 0 coverage by applying: “grep -w 0$” to the output. 
+#			-g:					genome file
+#			-trackline:			add trackline for uploading to UCSC genome browser
+#								http://bedtools.readthedocs.io/en/latest/content/tools/genomecov.html
+bedtools genomecov -bga -ibam 04_bam/filename_sorted_rmdup.bam -g hg19.genome > 05_bedgraph/filename_sorted_rmdup.bedgraph
+
+
+#-#-#-#-#-#-#-#-#
+#     BIGWIG	#
+#-#-#-#-#-#-#-#-#
+
+bedGraphToBigWig filename_sorted_rmdup.bedgraph hg19.chrom.sizes filename_sorted_rmdup.bw
+
+
+#-#-#-#-#-#-#-#-#
+#     MACS		#
+#-#-#-#-#-#-#-#-#
+#								first activate source
+#			-t:					filename
+#			-c:					control file
+#			-n:					name of the experiment, used to create output files
+#			--outdir:			folder to safe files to
+#			-f: 				format of input
+#			-g:					genome size. HS=2.7e9, mm=1.87e9
+#			--keep-dup:			controls the MACS behavior towards duplicate tags at the exact same location
+#			--call-summits:		reanalyze the shape of signal profile (p or q-score depending on cutoff setting) to deconvolve subpeaks within each peak called from general procedure
+source /zfs/datastore0/software/v_envs/py278_1/bin/activate
+
+macs2 callpeak -t 04_bam/filename_sorted_rmdup.bam -c 04_bam/filename_sorted_rmdup.bam -n filename --outdir 07_MACS/ -f BAM -g 2.7e9 --keep-dup all --call-summits
+
