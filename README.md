@@ -1,4 +1,4 @@
 # ChIP-seq
+#### Author: Elise van Bree
+##### The Frank Jacobs Lab
 
-## Author: Elise van Bree
-###### The Frank Jacobs Lab
