@@ -1,6 +1,5 @@
 # ChIP-seq
-#### Author: *Elise van Bree*
-##### **The Frank Jacobs Lab**
+#### *Elise van Bree* - **The Frank Jacobs Lab**
 
 ## Aim:
 Map Illumina ChIP-seq data on the human genome, build hg19.
