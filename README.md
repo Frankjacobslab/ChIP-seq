@@ -6,7 +6,7 @@ Map Illumina ChIP-seq data on the human genome, build hg19.
 
 ## Components:
 - Snakemake file for running pipeline.
-- File containing comments used for making the snakefile.
+- File containing commands used for making the snakefile.
 
 ## Requirements:
 - Work from a directory that contains the file hg19.chrom.sizes and the script bedGraphToBigWig.
