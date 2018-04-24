@@ -8,6 +8,7 @@ Map paired-end Illumina ChIP-seq data on the human genome, build hg19.
 - Snakemake file for running pipeline.
 - Config file with samples
 - File containing commands used for making the snakefile.
+- bedGraphToBigWig script
 
 ## Requirements:
 - Work from a directory that contains the file hg19.chrom.sizes and the script bedGraphToBigWig from UCSC.
