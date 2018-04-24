@@ -13,7 +13,7 @@ java -jar /zfs/datastore0/software/src/Trimmomatic-0.36/trimmomatic-0.36.jar PE 
 #			--end-to-end: 		default. will use whole read to allign.
 #			--very-sensitive:	same as running with options: -D 20 -R 3 -N 0 -L 20 -i S,1,0.50
 #			-p:					cores
-#			-mm:				momory-mapped (share same mamory image of index)
+#			-mm:				memory-mapped (share same mamory image of index)
 #			-q:					reads are FASTQ files
 #			-x:					basename of the index for the reference genome
 #			-1:					Comma-separated list of files containing mate 1s
