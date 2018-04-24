@@ -1,0 +1,15 @@
+samples:
+  type-a-sample-name-here-1: 
+    forward: HL3LMBBXX_103162-001-001_GCCAAT_L005_R1
+    reverse: HL3LMBBXX_103162-001-001_GCCAAT_L005_R2
+  type-a-sample-name-here-2:
+    forward: HL3LMBBXX_103162-001-002_CAGATC_L005_R1
+    reverse: HL3LMBBXX_103162-001-002_CAGATC_L005_R2
+  type-a-sample-name-here-3:
+    forward: HL3LMBBXX_103162-001-003_CTTGTA_L005_R1
+    reverse: HL3LMBBXX_103162-001-003_CTTGTA_L005_R2
+  type-a-sample-name-here-4:
+    forward: HL3LMBBXX_103162-001-004_AGTCAA_L005_R1
+    reverse: HL3LMBBXX_103162-001-004_AGTCAA_L005_R2
+
+
