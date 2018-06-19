@@ -1,6 +1,9 @@
 # ChIP-seq
 #### *Elise van Bree* - **The Frank Jacobs Lab**
 
+## CAUTION
+Probably there is a mistake in this pipeline. Will try to fix it and put an updated version on her some day...
+
 ## Aim:
 Map paired-end Illumina ChIP-seq data on the human genome, build hg19.
 
